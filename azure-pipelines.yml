@@ -15,7 +15,7 @@ stages:
   - job: Validate
     continueOnError: false
     steps:
-      - publish: 1-terraform
+      - publish: psql
         artifact: terraform_out
       - task: TerraformInstaller@0
         displayName: 'Use Terraform v0.12.6'
@@ -25,7 +25,7 @@ stages:
         displayName: 'terraform init'
         inputs:
           command: init
-          workingDirectory: 1-terraform
+          workingDirectory: psql
           backendType: azurerm
           backendServiceArm: 'aksterra'
           backendAzureRmResourceGroupName: 'AKSTerraform-RG'
@@ -36,7 +36,7 @@ stages:
         displayName: 'terraform validate'
         inputs:
          command: validate
-         workingDirectory: 1-terraform
+         workingDirectory: psql
 - stage: Deploy
   jobs:
   - deployment: Deploy_Terraform
