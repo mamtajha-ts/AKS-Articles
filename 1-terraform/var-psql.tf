@@ -15,7 +15,7 @@ variable "psqlserver_name" {
   default = "AKSTerraformpsql"
 }
 
-variable "admin_username" {
+variable "psqladmin_username" {
   type    = string
   default = "aksadmin"
 }

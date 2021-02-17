@@ -8,7 +8,7 @@ resource "azurerm_postgresql_server" "example" {
   location            = azurerm_resource_group.postgresdb.location
   resource_group_name = azurerm_resource_group.postgresdb.name
 
-  administrator_login          = "psqladmin"
+  administrator_login          = var.psqladmin_username
   administrator_login_password = "Passw0rd@123j"
 
   sku_name   = "GP_Gen5_4"
