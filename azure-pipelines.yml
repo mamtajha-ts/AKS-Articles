@@ -1,0 +1,78 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- stage: Validate
+  jobs:
+  - job: Validate
+    continueOnError: false
+    steps:
+      - publish: 1-terraform
+        artifact: terraform_out
+      - task: TerraformInstaller@0
+        displayName: 'Use Terraform v0.12.6'
+        inputs:
+          terraformVersion: 0.12.6
+      - task: TerraformCLI@0
+        displayName: 'terraform init'
+        inputs:
+          command: init
+          workingDirectory: 1-terraform
+          backendType: azurerm
+          backendServiceArm: 'aksterra'
+          backendAzureRmResourceGroupName: 'AKSTerraform-RG'
+          backendAzureRmStorageAccountName: 'aksstoragesocgen'
+          backendAzureRmContainerName: 'tfstate'
+          backendAzureRmKey: 'akskeyvault'
+      - task: TerraformCLI@0
+        displayName: 'terraform validate'
+        inputs:
+         command: validate
+         workingDirectory: 1-terraform
+- stage: Deploy
+  jobs:
+  - deployment: Deploy_Terraform
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: 'DEV'
+    strategy:
+     runOnce:
+       deploy:
+        steps:
+        - task: TerraformCLI@0
+          displayName: 'terraform-init'
+          inputs:
+            command: init
+            workingDirectory: $(Pipeline.Workspace)/terraform_out
+            backendType: azurerm
+            backendServiceArm: 'aksterra'
+            backendAzureRmResourceGroupName: 'AKSTerraform-RG'
+            backendAzureRmStorageAccountName: 'aksstoragesocgen'
+            backendAzureRmContainerName: 'tfstate'
+            backendAzureRmKey: 'akskeyvault'
+        - task: TerraformCLI@0
+          displayName: 'terraform plan'
+          inputs:
+            command: plan
+            workingDirectory: $(Pipeline.Workspace)/terraform_out
+            environmentServiceName: 'aksterra'
+            secureVarsFile: 'aks_conf.tfvars'
+            commandOptions: '-out $(Pipeline.Workspace)/terraform_out/terraform_aks_out'
+            terraformVersion: 0.12.6
+
+        - task: TerraformCLI@0
+          displayName: 'terraform apply'
+          inputs:
+            command: apply
+            workingDirectory: $(Pipeline.Workspace)/terraform_out
+            environmentServiceName: 'aksterra'
+            commandOptions: '$(Pipeline.Workspace)/terraform_out/terraform_aks_out'
+            terraformVersion: 0.12.6
