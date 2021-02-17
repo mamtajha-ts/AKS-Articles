@@ -9,11 +9,31 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+stages:
+- stage: Validate
+  jobs:
+  - job: Validate
+    continueOnError: false
+    steps:
+      - publish: 1-terraform
+        artifact: terraform_out
+      - task: TerraformInstaller@0
+        displayName: 'Use Terraform v0.12.6'
+        inputs:
+          terraformVersion: 0.12.6
+      - task: TerraformCLI@0
+        displayName: 'terraform init'
+        inputs:
+          command: init
+          workingDirectory: 1-terraform
+          backendType: azurerm
+          backendServiceArm: 'Azure SPN'
+          backendAzureRmResourceGroupName: 'AKSTerraform-RG'
+          backendAzureRmStorageAccountName: 'aksstoragesocgen'
+          backendAzureRmContainerName: 'tfstate'
+          backendAzureRmKey: 'aksterra'
+      - task: TerraformCLI@0
+        displayName: 'terraform validate'
+        inputs:
+         command: validate
+         workingDirectory: 1-terraform
