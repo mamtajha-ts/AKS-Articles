@@ -65,7 +65,7 @@ stages:
             workingDirectory: $(Pipeline.Workspace)/terraform_out
             environmentServiceName: 'aksterra'
             secureVarsFile: 'aks_conf.tfvars'
-            commandOptions: '-out $(Pipeline.Workspace)/terraform_aks_out'
+            commandOptions: '-out $(Pipeline.Workspace)/terraform_out/terraform_aks_out'
             terraformVersion: 0.12.6
 
         - task: TerraformCLI@0
@@ -74,5 +74,5 @@ stages:
             command: apply
             workingDirectory: $(Pipeline.Workspace)/terraform_out
             environmentServiceName: 'aksterra'
-            commandOptions: '-out $(Pipeline.Workspace)/terraform_aks_out'
+            commandOptions: '$(Pipeline.Workspace)/terraform_out/terraform_aks_out'
             terraformVersion: 0.12.6
