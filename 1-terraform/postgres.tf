@@ -13,6 +13,7 @@ resource "azurerm_postgresql_server" "example" {
 
   sku_name   = "GP_Gen5_4"
   version    = "9.6"
-  ssl_enforcement          = true
+  storage_profile = "5120"
+  ssl_enforcement          = enabled
 }
 
