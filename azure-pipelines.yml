@@ -48,7 +48,7 @@ stages:
        deploy:
         steps:
         - task: TerraformCLI@0
-          displayname: 'terraform-init'
+          displayName: 'terraform-init'
           inputs:
             command: init
             workingDirectory: $(Pipeline.Workspace)/terraform.out
