@@ -4,7 +4,7 @@ resource "azurerm_resource_group" "postgresdb" {
 }
 
 resource "azurerm_postgresql_server" "example" {
-  server_name                = var.psqlserver_name
+  name                = var.psqlserver_name
   location            = azurerm_resource_group.postgresdb.location
   resource_group_name = azurerm_resource_group.postgresdb.name
 
@@ -13,7 +13,7 @@ resource "azurerm_postgresql_server" "example" {
 
   sku_name   = "GP_Gen5_4"
   version    = "9.6"
-  storage_mb = "5120"
-  ssl_enforcement_enabled      = true
+  storage_profile = "5120"
+  ssl_enforcement      = Enabled
 }
 
