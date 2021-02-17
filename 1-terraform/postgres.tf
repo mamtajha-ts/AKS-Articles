@@ -1,7 +1,3 @@
-provider "azurerm" {
-  features {}
-}
-
 resource "azurerm_resource_group" "postgresdb" {
   name     = var.resource_group
   location = var.azure_region
