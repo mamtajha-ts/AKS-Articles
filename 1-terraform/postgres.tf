@@ -10,10 +10,5 @@ resource "azurerm_postgresql_server" "example" {
 
   administrator_login          = var.psqladmin_username
   administrator_login_password = "Passw0rd@123j"
-
-  sku_name   = "GP_Gen5_4"
-  version    = "9.6"
-  storage_mb = "5120"
-  ssl_enforcement_enabled = true
 }
 
